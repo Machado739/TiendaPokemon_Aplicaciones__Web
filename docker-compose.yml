@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  appweb:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - tiendadb
+
+  tiendadb:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bd_tiendapokemon
+    ports:
+      - "3307:3306"

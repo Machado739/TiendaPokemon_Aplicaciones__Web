@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <style>
+        /* Estilo para hacer que el menú sea fijo en la parte superior */
+        .fixed-top-menu {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Estilo para reducir el margen entre el banner y el contenido */
+        .jumbotron {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Estilo para reducir el margen superior del primer contenedor */
+        .first-container {
+            margin-top: -20px; /* Ajusta este valor según sea necesario */
+        }
+
+         /* Estilo para hacer que las imágenes de los productos sean más pequeñas */
+         .product-image {
+            max-width: 60%; /* Ajusta este valor según sea necesario */
+            height: 90%;
+        
+        }
+        
+    .card-img-top:hover {
+        transform: scale(1.05); /* Escala la imagen al 110% */
+        transition: transform 0.8s ease; /* Aplica una transición suave durante 0.5 segundos */
+    }
+
+        .card {
+        height: 100%; /* Establece una altura fija para todas las tarjetas */
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="container-fluid first-container">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <img style="width: 100%; height: 50%;" src="https://m.media-amazon.com/images/S/al-na-9d5791cf-3faf/30a63aec-d1ec-4283-9128-d7b7afc8133d._SL5000_CR0%2C0%2C5000%2C1000_SX1500_.jpg" class="banner" alt="Imagen del banner">
+                </div>
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top-menu">
+                    <a class="navbar-brand" href="#">Panel de Administrador</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+
+                           
+                            <ul class="navbar-nav">
+                                {% if current_user.is_authenticated and current_user.usertype == 3 %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Administración
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="{{ url_for('root') }}">Usuarios</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            {% if current_user.is_authenticated and current_user.usertype in [1, 3] %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Operaciones
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                        <a class="dropdown-item" href="{{ url_for('admin') }}">Inventario</a>
+                                        <a class="dropdown-item" href="{{ url_for('ventas') }}">Ventas</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{{ url_for('sobres') }}">✅ Sobres Pokémon <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('cajasdesobres') }}">🔥 Cajas de Sobres</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('elite') }}">👑 Cajas de Élite</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tematicas') }}">🎃 Cajas y Latas Temáticas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('misteriosas') }}">📦 Cajas Misteriosas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('todo') }}">⭐ Todos los Productos</a>
+                            </li>
+                                                </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="fas fa-user"></i> {{ current_user.username }}</a>
+                            </li>
+                            
+                        </ul>
+                        
+                        
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    
+    {% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Formulario para crear usuario -->
+        <div class="col-md-6">
+            <h2 class="mb-3">Crear Usuario</h2>
+            <form method="POST" action="{{ url_for('crear_usuario') }}">
+                <div class="form-group">
+                    <label for="username">Nombre de Usuario</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="fullname">Nombre Completo</label>
+                    <input type="text" class="form-control" id="fullname" name="fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="usertype">Tipo de Usuario</label>
+                    <select class="form-control" id="usertype" name="usertype" required>
+                        <option value="0">Cliente-0</option>
+                        <option value="1">Empleado-1</option>
+                        <option value="3">Administrador-3</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Crear Usuario</button>
+            </form>
+        </div>
+        <!-- Lista de usuarios -->
+        <div class="col-md-6">
+            <h2 class="mb-3">Lista de Usuarios</h2>
+            <!-- Formulario para filtrar usuarios por tipo -->
+            <form id="filter-form">
+                <div class="form-group">
+                    <label for="user-type-filter">Filtrar por Tipo de Usuario:</label>
+                    <select class="form-control" id="user-type-filter">
+                        <option value="">Todos</option>
+                        <option value="0">Cliente</option>
+                        <option value="1">Empleado</option>
+                        <option value="3">Administrador</option>
+                    </select>
+                </div>
+            </form>
+            <!-- Tabla de usuarios -->
+            <table class="table table-striped" id="user-table">
+                <!-- Encabezados de la tabla -->
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre de Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Tipo de Usuario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <!-- Cuerpo de la tabla -->
+                <tbody>
+                    {% for user in usuarios %}
+                    <tr data-user-type="{{ user.usertype }}">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.fullname }}</td>
+                        <td>{{ user.usertype }}</td>
+                        <td>
+                            <!-- Botón para editar usuario -->
+                            <button type="button" class="btn btn-primary btn-sm mr-2 edit-btn" data-toggle="modal" data-target="#editarUsuario{{ user.id }}">Editar</button>
+                            <!-- Formulario para eliminar usuario -->
+                            <form method="POST" action="{{ url_for('eliminar_usuario', user_id=user.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?')">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Modal para editar usuario -->
+        {% for user in usuarios %}
+        <div class="modal fade" id="editarUsuario{{ user.id }}" tabindex="-1" role="dialog" aria-labelledby="editarUsuarioLabel{{ user.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editarUsuarioLabel{{ user.id }}">Editar Usuario</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('update_user', user_id=user.id) }}" method="POST">
+                            <div class="form-group">
+                                <label for="username">Nombre de Usuario:</label>
+                                <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="fullname">Nombre Completo:</label>
+                                <input type="text" class="form-control" id="fullname" name="fullname" value="{{ user.fullname }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="usertype">Tipo de Usuario:</label>
+                                <select class="form-control" id="usertype" name="usertype">
+                                    <option value="0" {% if user.usertype == 0 %} selected {% endif %}>Cliente</option>
+                                    <option value="1" {% if user.usertype == 1 %} selected {% endif %}>Empleado</option>
+                                    <option value="3" {% if user.usertype == 3 %} selected {% endif %}>Administrador</option>
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+        <script>
+            // Función para filtrar la tabla por tipo de usuario
+            function filterTableByUserType() {
+                var userTypeFilter = document.getElementById('user-type-filter').value;
+                var rows = document.querySelectorAll('#user-table tbody tr');
+                
+                rows.forEach(function(row) {
+                    var userType = row.getAttribute('data-user-type');
+                    
+                    if (userTypeFilter === '' || userType === userTypeFilter) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Agregar un evento de cambio al filtro de tipo de usuario
+            document.getElementById('user-type-filter').addEventListener('change', function() {
+                filterTableByUserType();
+            });
+            
+            // Llamar a la función de filtrado al cargar la página
+            filterTableByUserType();
+        
+            // Obtener todos los botones de edición
+            var editButtons = document.querySelectorAll('.edit-btn');
+
+            // Iterar sobre cada botón de edición
+            editButtons.forEach(function(button) {
+                // Agregar un evento de clic a cada botón
+                button.addEventListener('click', function() {
+                    // Obtener el formulario de edición asociado a este botón
+                    var editForm = button.parentElement.querySelector('.edit-form');
+                    // Mostrar el formulario de edición
+                    editForm.style.display = 'block';
+                });
+            });
+
+            // Obtener todos los botones de cancelar
+            var cancelButtons = document.querySelectorAll('.cancel-btn');
+
+            // Iterar sobre cada botón de cancelar
+            cancelButtons.forEach(function(button) {
+                // Agregar un evento de clic a cada botón
+                button.addEventListener('click', function() {
+                    // Obtener el formulario de edición asociado a este botón
+                    var editForm = button.parentElement;
+                    // Ocultar el formulario de edición
+                    editForm.style.display = 'none';
+                });
+            });
+        </script>
+
+
+    </div>
+    {% endblock %}
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

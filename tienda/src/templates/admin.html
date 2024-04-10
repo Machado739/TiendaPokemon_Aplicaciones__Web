@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Inventario</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <style>
+        /* Estilo para hacer que el menú sea fijo en la parte superior */
+        .fixed-top-menu {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Estilo para reducir el margen entre el banner y el contenido */
+        .jumbotron {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Estilo para reducir el margen superior del primer contenedor */
+        .first-container {
+            margin-top: -20px; /* Ajusta este valor según sea necesario */
+        }
+
+         /* Estilo para hacer que las imágenes de los productos sean más pequeñas */
+         .product-image {
+            max-width: 60%; /* Ajusta este valor según sea necesario */
+            height: 90%;
+        
+        }
+        
+    .card-img-top:hover {
+        transform: scale(1.05); /* Escala la imagen al 110% */
+        transition: transform 0.8s ease; /* Aplica una transición suave durante 0.5 segundos */
+    }
+
+        .card {
+        height: 100%; /* Establece una altura fija para todas las tarjetas */
+    }
+    </style>
+</head>
+<body>
+    
+    <div class="container-fluid first-container">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <img style="width: 100%; height: 50%;" src="https://m.media-amazon.com/images/S/al-na-9d5791cf-3faf/30a63aec-d1ec-4283-9128-d7b7afc8133d._SL5000_CR0%2C0%2C5000%2C1000_SX1500_.jpg" class="banner" alt="Imagen del banner">
+                </div>
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top-menu">
+                    <a class="navbar-brand" href="#">Panel de Inventario</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+
+                            {% if current_user.is_authenticated and current_user.usertype == 3 %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Administración
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="{{ url_for('root') }}">Usuarios</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            {% if current_user.is_authenticated and current_user.usertype in [1, 3] %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Operaciones
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                        <a class="dropdown-item" href="{{ url_for('admin') }}">Inventario</a>
+                                        <a class="dropdown-item" href="{{ url_for('ventas') }}">Ventas</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{{ url_for('sobres') }}">✅ Sobres Pokémon <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('cajasdesobres') }}">🔥 Cajas de Sobres</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('elite') }}">👑 Cajas de Élite</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tematicas') }}">🎃 Cajas y Latas Temáticas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('misteriosas') }}">📦 Cajas Misteriosas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('todo') }}">⭐ Todos los Productos</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="fas fa-user"></i> {{ current_user.username }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <!-- Pestañas -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="productos-tab" data-toggle="tab" href="#productos" role="tab" aria-controls="productos" aria-selected="true">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="categorias-tab" data-toggle="tab" href="#categorias" role="tab" aria-controls="categorias" aria-selected="false">Categorías</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="productos" role="tabpanel" aria-labelledby="productos-tab">
+                      <!-- Formulario para agregar un nuevo producto -->
+                    <div class="card">
+                        <h5 class="card-header">Agregar Nuevo Producto</h5>
+                        <div class="card-body">
+                            <form action="/agregar_producto" method="POST">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre:</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre">
+                                </div>
+                                <div class="form-group">
+                                    <label for="precio">Precio:</label>
+                                    <input type="number" step="0.01" class="form-control" id="precio" name="precio">
+                                </div>
+                                <div class="form-group">
+                                    <label for="imagen_url">URL de la Imagen:</label>
+                                    <input type="text" class="form-control" id="imagen_url" name="imagen_url">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cantidad">Cantidad:</label>
+                                    <input type="number" class="form-control" id="cantidad" name="cantidad">
+                                </div>
+                                <div class="form-group">
+                                    <label for="categoria">Categoría:</label>
+                                    <select class="form-control" id="categoria" name="categoria_id">
+                                        {% for categoria in categorias %}
+                                            <option value="{{ categoria.id }}">{{ categoria.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Agregar Producto</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    </div>   
+                    <!-- Contenido de la pestaña de categorías -->
+                    <div class="tab-pane fade" id="categorias" role="tabpanel" aria-labelledby="categorias-tab">
+                        <!-- Contenido del formulario para agregar una nueva categoría -->
+                        <!-- Formulario para agregar una nueva categoría -->
+                        <div class="card mt-3">
+                            <h5 class="card-header">Agregar Nueva Categoría</h5>
+                            <div class="card-body">
+                                <form action="/agregar_categoria" method="POST">
+                                    <div class="form-group">
+                                        <label for="name">Nombre:</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Descripción:</label>
+                                        <input type="text" class="form-control" id="descripcion" name="descripcion">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Agregar Categoría</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Lista de categorías -->
+                        <!-- Lista de categorías con descripción y barra de desplazamiento -->
+                        <div class="mt-3" style="max-height: 300px; overflow-y: auto;">
+                            <h5>Categorías:</h5>
+                            <ul class="list-group">
+                                {% for categoria in categorias %}
+                                <li id="categoria-{{ categoria.id }}" class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>{{ categoria.name }}</h6>
+                                        <p>{{ categoria.description }}</p>
+                                    </div>
+                                    <div class="btn-group" role="group" aria-label="Acciones">
+                                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editarCategoria{{ categoria.id }}">Editar</button>
+                                        <button type="button" class="btn btn-danger" onclick="eliminarCategoria({{ categoria.id }})">Eliminar</button>
+                                    </div>
+                                </li>
+                                <!-- Modal para editar categoría -->
+                                <div class="modal fade" id="editarCategoria{{ categoria.id }}" tabindex="-1" role="dialog" aria-labelledby="editarCategoriaLabel{{ categoria.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editarCategoriaLabel{{ categoria.id }}">Editar Categoría</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/update_category/{{ categoria.id }}" method="POST">
+                                                    <div class="form-group">
+                                                        <label for="name">Nombre:</label>
+                                                        <input type="text" class="form-control" id="name" name="name" value="{{ categoria.name }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="description">Descripción:</label>
+                                                        <input type="text" class="form-control" id="description" name="description" value="{{ categoria.description }}">
+                                                    </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+                          
+
+            </div>
+            <div class="col-md-8">
+                <!-- Mostrar lista de productos en el inventario -->
+                    <div class="row overflow-auto" style="max-height: calc(100vh - 120px);">
+                        {% for product in productos %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="text-center">
+                                    <!-- Centra la imagen -->
+                                    <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.name }}" style="margin-top: 4%;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text">Precio: {{ product.price }}</p>
+                                    <p class="card-text">Cantidad: {{ product.inventory.quantity }}</p>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editarProducto{{ product.id }}">Modificar</button>
+                                        <!-- Botones de borrar y modificar uno al lado del otro -->
+                                        <form action="/borrar_producto/{{ product.id }}" method="POST">
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </div>
+
+                                <!-- Modal para editar producto -->
+                                <div class="modal fade" id="editarProducto{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="editarProductoLabel{{ product.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editarProductoLabel{{ product.id }}">Modificar Producto</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Formulario para modificar producto -->
+                                                <form action="/modificar_producto/{{ product.id }}" method="POST">
+                                                    <div class="form-group">
+                                                        <label for="nombre">Nombre:</label>
+                                                        <!-- Input para el nombre del producto -->
+                                                        <input type="text" class="form-control" id="nombre{{ product.id }}" name="nombre" value="{{ product.name }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="precio">Precio:</label>
+                                                        <!-- Input para el precio del producto -->
+                                                        <input type="number" step="0.01" class="form-control" id="precio{{ product.id }}" name="precio" value="{{ product.price }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="imagen_url">URL de la Imagen:</label>
+                                                        <!-- Input para la URL de la imagen del producto -->
+                                                        <input type="text" class="form-control" id="imagen_url{{ product.id }}" name="imagen_url" value="{{ product.image_url }}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cantidad">Cantidad:</label>
+                                                        <!-- Input para la cantidad del producto -->
+                                                        <input type="number" class="form-control" id="cantidad{{ product.id }}" name="cantidad" value="{{ product.inventory.quantity }}">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <!-- Botón Guardar -->
+                                                <button type="button" class="btn btn-primary" onclick="guardarCambios({{ product.id }})">Guardar</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                               
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function guardarCambios(productId) {
+            // Obtener el formulario de modificación
+            var form = document.querySelector('form[action="/modificar_producto/' + productId + '"]');
+    
+            // Copiar los valores del formulario de modificación al formulario de agregación
+            document.getElementById('nombre').value = form.querySelector('#nombre' + productId).value;
+            document.getElementById('precio').value = form.querySelector('#precio' + productId).value;
+            document.getElementById('imagen_url').value = form.querySelector('#imagen_url' + productId).value;
+            document.getElementById('cantidad').value = form.querySelector('#cantidad' + productId).value;
+    
+            // Enviar el formulario de modificación al servidor
+            form.submit();
+        }
+
+
+            // Función para cambiar la visibilidad de los elementos según la pestaña seleccionada
+            function toggleContent(tabId) {
+                var productosContent = document.getElementById('productos');
+                var categoriasContent = document.getElementById('categorias');
+
+                var listaProductos = document.getElementById('listaProductos');
+                var listaCategorias = document.getElementById('listaCategorias');
+
+                if (tabId === 'productos-tab') {
+                    productosContent.style.display = 'block';
+                    listaProductos.style.display = 'block';
+                    categoriasContent.style.display = 'none';
+                    listaCategorias.style.display = 'none';
+                } else if (tabId === 'categorias-tab') {
+                    productosContent.style.display = 'none';
+                    listaProductos.style.display = 'none';
+                    categoriasContent.style.display = 'block';
+                    listaCategorias.style.display = 'block';
+                }
+            }
+
+            // Evento para cambiar la visibilidad cuando se cambia de pestaña
+            var tabLinks = document.querySelectorAll('[data-toggle="tab"]');
+            tabLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    toggleContent(link.getAttribute('id'));
+                });
+            });
+
+            function eliminarCategoria(categoriaId) {
+    // Realizar una solicitud AJAX al servidor para eliminar la categoría
+    fetch(`/delete_category/${categoriaId}`, {
+        method: 'POST'
+    })
+    .then(response => {
+        if (response.ok) {
+            // Si la solicitud se completa con éxito, eliminar el elemento de la lista de categorías en el navegador
+            var categoriaElement = document.getElementById(`categoria-${categoriaId}`);
+            categoriaElement.parentNode.removeChild(categoriaElement);
+        } else {
+            console.error('Error al eliminar la categoría');
+        }
+    })
+    .catch(error => {
+        console.error('Error de red:', error);
+    });
+}
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

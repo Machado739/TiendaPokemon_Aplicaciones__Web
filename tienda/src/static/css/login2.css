@@ -1,0 +1,52 @@
+/* CSS personalizado para la página de registro con temática Pokémon */
+body {
+    background-image: url('https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2019/08/pokemon_10.jpg?tf=1200x'); /* Cambia 'ruta/a/tu/imagen/pokemon_background.jpg' por la ruta de tu imagen de fondo */
+    background-size: cover;
+    background-position: center top 0px; /* Mueve la imagen 250px hacia abajo */
+    background-repeat: no-repeat;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente para el texto */
+    display: flex; /* Utilizar flexbox para centrar el contenido */
+    justify-content: center; /* Centrar horizontalmente */
+   
+    height: 100vh; /* Altura total de la ventana del navegador */
+}
+
+/* Estilo para el contenedor del formulario de registro */
+.register-container {
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para mejorar la legibilidad del formulario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3); /* Sombra suave */
+    margin-top: 100px; /* Espacio superior */
+}
+
+/* Estilo para el título del formulario de registro */
+.register-title {
+    text-align: center; /* Centrar el título */
+    color: #000000; /* Color del texto */
+    margin-bottom: 30px; /* Margen inferior */
+    font-size: 28px; /* Tamaño de fuente más grande */
+    text-transform: uppercase; /* Convertir texto a mayúsculas */
+}
+
+/* Estilo para los campos de formulario */
+.register-form .form-group label {
+    font-weight: bold; /* Texto en negrita */
+    color: #555; /* Color del texto de las etiquetas */
+}
+
+/* Estilo para el botón de registro */
+.register-form .btn-primary {
+    background-color: #ffcc00; /* Color de fondo del botón (amarillo) */
+    border-color: #ffcc00; /* Color del borde del botón */
+    font-weight: bold; /* Texto en negrita */
+    text-transform: uppercase; /* Convertir texto a mayúsculas */
+    width: 100%; /* Ancho completo */
+}
+
+.register-form .btn-primary:hover {
+    background-color: #e6b800; /* Cambio de color al pasar el mouse */
+    border-color: #e6b800; /* Cambio de color del borde al pasar el mouse */
+}
+
+

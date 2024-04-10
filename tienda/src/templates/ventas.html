@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Inventario</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <style>
+        /* Estilo para hacer que el menú sea fijo en la parte superior */
+        .fixed-top-menu {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Estilo para reducir el margen entre el banner y el contenido */
+        .jumbotron {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Estilo para reducir el margen superior del primer contenedor */
+        .first-container {
+            margin-top: -20px; /* Ajusta este valor según sea necesario */
+        }
+
+        /* Estilo para limitar el espacio donde se muestran los productos */
+        .product-details {
+            max-height: 300px; /* Altura máxima para los detalles del producto */
+            overflow-y: auto; /* Agregar desplazamiento vertical si los detalles exceden la altura máxima */
+        }
+
+        /* Estilo para los botones de ver y ocultar productos */
+        .products-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body >
+    
+    <div class="container-fluid first-container">
+        <div class="row">
+            <div class="col">
+                <div class="jumbotron">
+                    <img style="width: 100%; height: 50%;" src="https://m.media-amazon.com/images/S/al-na-9d5791cf-3faf/30a63aec-d1ec-4283-9128-d7b7afc8133d._SL5000_CR0%2C0%2C5000%2C1000_SX1500_.jpg" class="banner" alt="Imagen del banner">
+                </div>
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top-menu">
+                    <a class="navbar-brand" href="#">Panel de Ventas</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+
+                            {% if current_user.is_authenticated and current_user.usertype == 3 %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Administración
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="{{ url_for('root') }}">Usuarios</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            {% if current_user.is_authenticated and current_user.usertype in [1, 3] %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Operaciones
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                        <a class="dropdown-item" href="{{ url_for('admin') }}">Inventario</a>
+                                        <a class="dropdown-item" href="{{ url_for('ventas') }}">Ventas</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{{ url_for('sobres') }}">✅ Sobres Pokémon <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('cajasdesobres') }}">🔥 Cajas de Sobres</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('elite') }}">👑 Cajas de Élite</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tematicas') }}">🎃 Cajas y Latas Temáticas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('misteriosas') }}">📦 Cajas Misteriosas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('todo') }}">⭐ Todos los Productos</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#"><i class="fas fa-user"></i> {{ current_user.username }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div> 
+    <div style="margin-left: 5%; margin-right: 5%;">  
+        <h1>Reporte de Ventas</h1>
+    
+        {% if order_ids and user_ids and order_dates and total_amounts and items %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Orden ID</th>
+                        <th>Fecha de la orden</th>
+                        <th>Usuario ID</th>
+                        <th>Total</th>
+                        <th>Acciones</th> <!-- Nueva columna para el botón "Ver productos" -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(items|length) %}
+                        <tr>
+                            <td>{{ order_ids[i] }}</td>
+                            <td>{{ order_dates[i] }}</td>
+                            <td>{{ user_ids[i] }}</td>
+                            <td>${{ total_amounts[i] }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary view-products-btn" data-order-id="{{ order_ids[i] }}">Ver productos</button>
+                            </td>
+                        </tr>
+                        <!-- Nueva fila para mostrar los productos -->
+                        <tr class="products-row" id="productsRow{{ order_ids[i] }}" style="display: none;">
+                            <td colspan="5">
+                                <!-- Espacio para mostrar los productos -->
+                                <div class="product-details">
+                                    <!-- Aquí se mostrarán los productos de la orden -->
+                                </div>
+                                <button type="button" class="btn btn-secondary hide-products-btn" data-order-id="{{ order_ids[i] }}">Ocultar</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay ventas registradas.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Cuando se hace clic en un botón de ver productos
+        $('.view-products-btn').click(function() {
+            var orderId = $(this).data('order-id');
+            $.ajax({
+                url: '/get_order_products', // Ruta para obtener los productos de la orden
+                method: 'GET',
+                data: { order_id: orderId },
+                success: function(response) {
+                    // Mostrar los productos al lado de la fila de la orden correspondiente
+                    var productsHtml = '';
+                    response.products.forEach(function(product) {
+                        productsHtml += '<div class="card mb-3">';
+                        productsHtml += '<div class="card-body">';
+                        productsHtml += '<h5 class="card-title">' + product.name + '</h5>';
+                        productsHtml += '<p class="card-text">Cantidad: ' + product.quantity + '</p>';
+                        productsHtml += '<p class="card-text">Precio: $' + product.price + '</p>';
+                        
+                        productsHtml += '</div>';
+                        productsHtml += '</div>';
+                    });
+                    $('#productsRow' + orderId).find('.product-details').html(productsHtml);
+                    $('#productsRow' + orderId).show();
+                    $('.view-products-btn[data-order-id="' + orderId + '"]').hide(); // Ocultar el botón "Ver productos"
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al obtener los productos de la orden:', error);
+                }
+            });
+        });
+
+        // Cuando se hace clic en un botón de ocultar productos
+        $('.hide-products-btn').click(function() {
+            var orderId = $(this).data('order-id');
+            $('#productsRow' + orderId).hide();
+            $('.view-products-btn[data-order-id="' + orderId + '"]').show(); // Mostrar el botón "Ver productos"
+        });
+    </script>
+    
+</body>
+</html>

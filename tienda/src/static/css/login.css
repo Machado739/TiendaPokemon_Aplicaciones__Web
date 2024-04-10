@@ -1,0 +1,70 @@
+/* CSS personalizado para el fondo y decoración de Pokémon en la página de inicio de sesión */
+body {
+    background-image: url('https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2019/08/pokemon_10.jpg?tf=1200x'); /* Cambia 'ruta/a/tu/imagen/pokemon_background.jpg' por la ruta de tu imagen de fondo */
+    background-size: cover;
+    background-position: center top 0px; /* Mueve la imagen 250px hacia abajo */
+
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif; /* Fuente para el texto */
+}
+
+.login-container {
+    
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para mejorar la legibilidad del formulario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3); /* Sombra suave */
+    margin-top: 100px; /* Espacio superior */
+}
+
+.login-title {
+    color: #333; /* Color del título */
+    text-align: center;
+}
+
+.login-form {
+ 
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente para el formulario */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3); /* Sombra suave */
+}
+
+.form-group label {
+    font-weight: bold; /* Texto en negrita */
+}
+
+.form-control {
+    border: 1px solid #ccc; /* Borde del campo de entrada */
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #ff9900; /* Color de fondo del botón primario */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #e68a00; /* Color de fondo del botón primario al pasar el cursor */
+}
+
+.register-option {
+    color: #333; /* Color del texto de la opción de registro */
+    text-align: center;
+    margin-top: 10px; /* Espacio superior */
+}
+
+.register-option a {
+    color: #007bff; /* Color del enlace de registro */
+}
+
+.register-option a:hover {
+    text-decoration: underline; /* Subrayar enlace al pasar el cursor */
+}
+
+#register-form {
+    display: none; /* Ocultar formulario de registro por defecto */
+}
+
+
+

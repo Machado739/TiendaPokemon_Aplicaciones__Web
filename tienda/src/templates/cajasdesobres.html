@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cajas de Sobres Pokemon</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../static/css/sobres.css">
+</head>
+<body>
+    <div class="shopping-cart-container" id="cart-section">
+        <div class="shopping-cart">
+            <!-- Aquí van los elementos de tu carrito de compras -->
+        </div>
+        <button class="btn btn-success btn-block mt-3" onclick="purchaseCart()">Comprar</button>
+
+    </div>
+    
+    <div  id="main-content">  
+        <div class="container-fluid first-container">
+            <div class="row">
+                <div class="col">
+                    <!-- Contenedor del banner -->
+                    <div class="container-fluid banner-container">
+                        <div class="jumbotron">
+                            <img style="width: 100%; height: 50%;" src="https://m.media-amazon.com/images/S/al-na-9d5791cf-3faf/30a63aec-d1ec-4283-9128-d7b7afc8133d._SL5000_CR0%2C0%2C5000%2C1000_SX1500_.jpg" class="banner" alt="Imagen del banner">
+                        </div>
+                    </div>
+                    <!-- Navbar -->
+                    <nav id="menus" class="navbar navbar-expand-lg navbar-light bg-light fixed-top-menu">
+                        <a class="navbar-brand" href="#">Cajas de Sobres</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav" >
+                            <ul class="navbar-nav">
+                                {% if current_user.is_authenticated and current_user.usertype == 3 %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Administración
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="{{ url_for('root') }}">Usuarios</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+
+                            {% if current_user.is_authenticated and current_user.usertype in [1, 3] %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Operaciones
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+                                        <a class="dropdown-item" href="{{ url_for('admin') }}">Inventario</a>
+                                        <a class="dropdown-item" href="{{ url_for('ventas') }}">Ventas</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="{{ url_for('sobres') }}">✅ Sobres Pokémon <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('cajasdesobres') }}">🔥 Cajas de Sobres</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('elite') }}">👑 Cajas de Élite</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('tematicas') }}">🎃 Cajas y Latas Temáticas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('misteriosas') }}">📦 Cajas Misteriosas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('todo') }}">⭐ Todos los Productos</a>
+                                </li>
+                            </ul>
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#"><i class="fas fa-user"></i> {{ current_user.username }}</a>
+                                </li>
+                            </ul>
+                            <li class="nav-item">
+                                <!-- Agrega el botón del carrito en el menú -->
+                                <a class="nav-link"  onclick="showCartFromMenu()">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </a>
+                            </li>
+                            
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- Productos de la categoría 7 -->
+        <div class="container-fluid" style="padding-top: 2%; padding-left: 5%; padding-right: 5%;">
+            <div class="row">
+                <div>
+                    <div class="row">
+                        <!-- Productos de la categoría 7 -->
+                        {% for product in productos %}
+                        <div class="col-lg-2 col-md-3 mb-4"> <!-- Ajusta el tamaño de las columnas según tus necesidades -->
+                            <div class="card h-100 product">
+                                <div class="text-center">
+                                    <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text">Precio: {{ product.price }}</p>
+                                    <p class="card-text">Inventario: {{ product.inventory.quantity }}</p>
+                                    <!-- Agregar el cuadro de cantidad y el botón "Agregar al carrito" -->
+                                    <div class="form-group">
+                                        <label for="quantity{{ product.id }}">Cantidad:</label>
+                                        <input type="number" class="form-control" id="quantity{{ product.id }}" min="1" value="1">
+                                    </div>
+                                    <button class="btn btn-primary" onclick="addToCart('{{ product.id }}', '{{ product.name }}', '{{ product.price }}')" onclick="window.location.reload();">Agregar al carrito</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal de confirmación de compra -->
+        <div class="modal" id="confirmModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Encabezado del modal -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar compra</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Contenido del modal -->
+                    <div class="modal-body">
+                        ¿Estás seguro de realizar la compra?
+                    </div>
+                    <!-- Pie del modal -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmPurchase()">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para mostrar el tiquete -->
+        <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ticketModalLabel">Tiquete de Compra</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="ticket-content">
+                        <!-- Aquí se mostrará el contenido del tiquete -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="window.location.reload();">Cerrar</button>
+                        <button type="button" class="btn btn-primary" id="downloadTicketBtn" onclick="window.location.reload();">Descargar Tiquete</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+            var cartVisible = false; // Variable para rastrear si el carrito está visible o no
+
+            function purchaseCart() {
+    // Obtener información sobre los elementos del carrito
+    fetch('/shopping_cart')
+        .then(response => response.json())
+        .then(data => {
+            // Construir una lista de elementos del carrito para mostrar en la ventana modal
+            let cartItems = '';
+            data.forEach(item => {
+                cartItems += `<li>${item.product_name} - Cantidad: ${item.quantity}</li>`;
+            });
+
+            // Mostrar la ventana modal de confirmación con la lista de elementos del carrito
+            $('#confirmModal .modal-body').html(`
+                <p>¿Estás seguro de realizar la compra de los siguientes elementos?</p>
+                <ul>${cartItems}</ul>
+            `);
+
+            $('#confirmModal').modal('show'); // Mostrar la ventana modal de confirmación
+        })
+        .catch(error => {
+            console.error('Error al obtener los elementos del carrito:', error);
+            alert('Error al obtener los elementos del carrito. Por favor, inténtalo nuevamente.');
+        });
+}
+
+function generateTicket(data) {
+        let ticketContent = ''; // Contenido del tiquete
+
+        // Construir el contenido del tiquete
+        ticketContent += '======= Tiquete de Compra =======\n';
+        ticketContent += 'Fecha: ' + new Date().toLocaleString() + '\n\n';
+        ticketContent += 'Detalle de la compra:\n';
+
+        data.forEach(item => {
+            ticketContent += `Nombre del producto: ${item.product_name}\n`;
+            ticketContent += `Cantidad: ${item.quantity}\n`;
+            ticketContent += `Precio unitario: ${item.unit_price}\n`;
+            ticketContent += `-------------------\n`;
+        });
+
+        // Agregar el total al tiquete
+        ticketContent += `Total: ${data.total}\n`;
+        ticketContent += '==================================\n';
+
+        // Mostrar el tiquete dentro del modal
+        const ticketModalBody = document.getElementById('ticket-content');
+        ticketModalBody.textContent = ticketContent;
+
+        // Agregar un listener al botón de descargar tiquete
+        const downloadTicketBtn = document.getElementById('downloadTicketBtn');
+        downloadTicketBtn.addEventListener('click', () => {
+            downloadTicket(ticketContent);
+        });
+
+        // Mostrar el modal
+        $('#ticketModal').modal('show');
+    }
+
+    // Función para descargar el tiquete como archivo de texto
+    function downloadTicket(ticketContent) {
+        const blob = new Blob([ticketContent], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'tiquete_compra.txt'; // Nombre del archivo
+        link.click();
+    }
+
+        // Modificar la función confirmPurchase() para que genere el tiquete
+        function confirmPurchase() {
+            $('#confirmModal').modal('hide'); // Ocultar la ventana modal de confirmación
+
+            // Obtener información sobre los elementos del carrito
+            fetch('/shopping_cart')
+                .then(response => response.json())
+                .then(data => {
+                    generateTicket(data); // Generar el tiquete con los datos del carrito
+
+                    // Realizar la compra
+                    fetch('/realizar_venta', {
+                        method: 'POST'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Mostrar la confirmación de la compra
+                               
+                                // Redireccionar a una página de confirmación o actualizar la página actual
+                               
+                            } else {
+                                // Mostrar un mensaje de error si la compra no se pudo realizar
+                                alert('Error al realizar la compra. Por favor, inténtalo nuevamente.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al realizar la compra:', error);
+                            alert('Error al realizar la compra. Por favor, inténtalo nuevamente.');
+                        });
+                })
+                .catch(error => {
+                    console.error('Error al obtener los elementos del carrito:', error);
+                    alert('Error al obtener los elementos del carrito. Por favor, inténtalo nuevamente.');
+                });
+        }
+
+
+
+
+
+
+
+    
+            // Función para cargar los elementos del carrito
+            function loadCartItems() {
+                    fetch('/shopping_cart')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Obtener el contenedor del carrito
+                            const cartContainer = document.querySelector('.shopping-cart');
+
+                            // Limpiar el contenedor antes de agregar nuevos elementos
+                            cartContainer.innerHTML = '';
+
+                            // Variable para almacenar el subtotal
+                            let subtotal = 0;
+
+                            // Iterar sobre los datos del carrito y agregar cada elemento al DOM
+                            data.forEach(item => {
+                                // Calcular el precio total para este artículo
+                                const totalItemPrice = item.unit_price * item.quantity;
+                                subtotal += totalItemPrice;
+
+                                // Crear un elemento para el artículo del carrito
+                                const cartItem = document.createElement('div');
+                                cartItem.classList.add('cart-item');
+
+                                // Agregar el nombre del artículo (centrado y más pequeño)
+                                const itemName = document.createElement('div');
+                                itemName.classList.add('item-name');
+                                itemName.textContent = item.product_name;
+                                cartItem.appendChild(itemName);
+
+                                // Agregar la imagen del artículo (tamaño fijo)
+                                const itemImage = document.createElement('div');
+                                itemImage.classList.add('item-image');
+                                const img = document.createElement('img');
+                                img.src = item.image_url;
+                                img.alt = item.product_name;
+                                img.style.height = '150px'; // Establecer el tamaño de la imagen
+                                itemImage.appendChild(img);
+                                cartItem.appendChild(itemImage);
+
+                                // Agregar el precio unitario del artículo
+                                const itemPrice = document.createElement('div');
+                                itemPrice.classList.add('item-price');
+                                itemPrice.textContent = `Precio unitario: $${item.unit_price}`;
+                                cartItem.appendChild(itemPrice);
+
+                                // Agregar la cantidad del artículo (con opción de cambiar)
+                                const itemQuantity = document.createElement('div');
+                                itemQuantity.classList.add('item-quantity');
+                                itemQuantity.innerHTML = `
+                                    Cantidad: 
+                                    <input type="number" min="1" value="${item.quantity}" 
+                                            onchange="updateCartItemQuantity(${item.cart_item_id}, ${item.product_id}, this.value)"> 
+                                    <i class="fas fa-trash-alt" onclick="removeCartItem(${item.cart_item_id})"></i>`;
+                                cartItem.appendChild(itemQuantity);
+
+                                // Agregar el artículo al contenedor del carrito
+                                cartContainer.appendChild(cartItem);
+                            });
+
+                            // Crear un elemento para mostrar el subtotal
+                            const subtotalElement = document.createElement('div');
+                            subtotalElement.classList.add('subtotal');
+                            subtotalElement.textContent = `Subtotal: $${subtotal}`;
+                            cartContainer.prepend(subtotalElement); // Agregar el subtotal al principio del contenedor
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar elementos del carrito:', error);
+                        });
+                }
+
+                function updateCartItemQuantity(cart_item_id, product_id, quantity) {
+                console.log("cart_item_id:", cart_item_id, "product_id:", product_id, "new_quantity:", quantity);
+                fetch('/update_cart_item_quantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        cart_item_id: cart_item_id,
+                        product_id: product_id,
+                        new_quantity: quantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadCartItems();
+                    } else {
+                        console.error('Error al actualizar la cantidad del artículo en el carrito:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar la cantidad del artículo en el carrito:', error);
+                });
+            }
+
+                // Función para eliminar un artículo del carrito
+                function removeCartItem(cart_item_id) {
+                    // Realizar una solicitud POST al servidor para eliminar el artículo del carrito
+                    fetch(`/remove_cart_item/${cart_item_id}`, {
+                        method: 'POST'
+                
+                    })
+                    .then(response =>  {
+                        if (response.ok) {
+                            // Recargar los elementos del carrito después de eliminar el artículo
+                            loadCartItems();
+                        } else {
+                            console.error('Error al eliminar el artículo del carrito:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al eliminar el artículo del carrito:', error);
+                    });
+                }
+
+            function addToCart(productId, productName, productPrice) {
+                var quantityInput = document.getElementById('quantity' + productId);
+                var quantity = parseInt(quantityInput.value);
+
+                // Realizar una solicitud POST al servidor para agregar el producto al carrito
+                fetch('/add_to_cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar un mensaje de éxito si el producto se agregó al carrito correctamente
+                      
+                    } else {
+                        // Mostrar un mensaje de error si ocurrió un problema al agregar el producto al carrito
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al agregar al carrito:', error);
+                    alert('Ocurrió un error al agregar el producto al carrito. Por favor, inténtalo nuevamente.');
+                });
+            }
+
+            // Función para mostrar u ocultar el carrito
+            // Función para mostrar u ocultar el carrito
+function showCartFromMenu() {
+    var cartSection = document.getElementById('cart-section');
+    var cartItems = document.querySelector('.shopping-cart').querySelectorAll('.cart-item');
+    if (cartItems.length > 0) {
+        if (cartVisible) {
+            cartSection.style.display = 'none'; // Oculta el carrito si ya está visible
+            cartVisible = false;
+            adjustMainContentWidth(); // Restablece el ancho del contenido principal
+        } else {
+            cartSection.style.display = 'block'; // Muestra el carrito si está oculto
+            cartVisible = true;
+            adjustMainContentWidth(); // Ajusta el ancho del contenido principal
+            loadCartItems(); // Carga los elementos del carrito
+        }
+    } else {
+        alert('El carrito está vacío.'); // Muestra un mensaje si el carrito está vacío
+    }
+}
+
+            // Función para ajustar el ancho del contenido principal
+            function adjustMainContentWidth() {
+                var mainContent = document.getElementById('main-content');
+                var cartSection = document.getElementById('cart-section');
+                if (cartVisible) {
+                    mainContent.style.marginTop = '1%'; // Reduce el ancho del contenido principal cuando se muestra el carrito
+                    mainContent.style.width = '90%'; // Reduce el ancho del contenido principal cuando se muestra el carrito
+                } else {
+                    mainContent.style.width = '100%'; // Restablece el ancho del contenido principal cuando se oculta el carrito
+                }
+            }
+            // Función para ocultar el carrito cuando se carga la página
+            window.onload = function() {
+                var cartSection = document.getElementById('cart-section');
+                cartSection.style.display = 'none'; // Ocultar el carrito por defecto
+                cartVisible = false;
+                loadCartItems();
+            };
+            
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+     /* Estilo para hacer que el menú sea fijo en la parte superior */
+          .fixed-top-menu {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.9) !important; /* Cambia el 0.8 para ajustar la transparencia */
+
+        }
+
+        /* Estilo para reducir el margen entre el banner y el contenido */
+        .jumbotron {
+            margin-top: 2%;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Estilo para reducir el margen superior del primer contenedor */
+        .first-container {
+            margin-top: -20px; /* Ajusta este valor según sea necesario */
+        }
+
+        /* Estilo para los contenedores de productos */
+        .card {
+            height: 100%; /* Establece una altura fija para todas las tarjetas */
+            border-radius: 10px; /* Ajusta el radio de borde para que sea rectangular */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Agrega una sombra suave */
+        }
+
+            /* Opcional: asegúrate de que los elementos del menú sean visibles */
+    .fixed-top-menu .navbar-light .navbar-nav .nav-link {
+        color: #000 ; /* Cambia el color según necesites */
+    }
+
+    .fixed-top-menu .navbar-light .navbar-brand {
+        color: #000 ; /* Cambia el color según necesites */
+    }
+
+    /* Ajustes para el ícono de menú en vistas reducidas */
+    .fixed-top-menu .navbar-toggler {
+        border-color: rgba(0,0,0,0.1); /* Ajusta según el fondo para mejor visibilidad */
+    }
+    .fixed-top-menu .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); /* Cambia el color del icono */
+    }
+
+        /* Ajustes para las imágenes de los productos */
+        .product-image {
+          
+            height: 250px;
+            display: block;
+            margin: 0 auto; /* Centra horizontalmente */
+            border-radius: 10px 10px 0 0; /* Aplica un radio de borde solo en las esquinas superiores */
+        }
+
+        /* Estilo para la transición de hover en las imágenes */
+        .card-img-top:hover {
+            transform: scale(1.05); /* Escala la imagen al 105% */
+            transition: transform 0.8s ease; /* Aplica una transición suave durante 0.8 segundos */
+        }
+
+        /* Ajustes para el espaciado entre las tarjetas */
+        .mb-4 {
+            margin-bottom: 20px; /* Ajusta el margen inferior entre las tarjetas */
+        }
+
+        /* Estilo para el carrusel de compras */
+        .product-detail {
+            width: 360px;
+            padding: 24px;
+            box-sizing: border-box;
+            position: fixed;
+            right: 0;
+            top: 80px; /* Ajusta la posición vertical según sea necesario */
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo opaco */
+            border-radius: 10px; /* Borde redondeado */
+            border: 1px solid #ccc; /* Borde ligero */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            display: none; /* Oculta el carrusel por defecto */
+        }
+        .product-detail.open {
+            display: block; /* Muestra el carrusel cuando tiene la clase 'open' */
+        }
+        .title-container {
+            display: flex;
+        }
+        .title-container img {
+            transform: rotate(180deg);
+            margin-right: 14px;
+        }
+        .title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+  
+        .shopping-cart-container {
+            position: fixed; /* Fija el contenedor a la ventana del navegador */
+            top: 9%; /* Alineado a la parte superior */
+            right: 0; /* Alineado a la derecha */
+            width: 13%; /* Ocupa el 10% del ancho de la ventana */
+            height: 90%; /* Ocupa el 100% de la altura de la ventana */
+            overflow-y: auto; /* Permite desplazarse verticalmente si el contenido excede la altura */
+            background-color: rgba(255, 255, 255, 0.9) ; /* Cambia el 0.8 para ajustar la transparencia */
+            border-left: 1px solid #ccc; /* Línea divisoria para definir el borde izquierdo */
+            z-index: 1000; /* Asegura que el carrito esté por encima de otros elementos */
+        }
+    
+        .shopping-cart {
+            padding: 20px; /* Espaciado interno para el contenido del carrito */
+        }
+        #carrtioimg{
+            max-width: 100%;
+            max-height: 80%;
+        }
